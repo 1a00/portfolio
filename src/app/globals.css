@@ -1,26 +1,260 @@
 @import "tailwindcss";
 
+/*
+ * Tokens do docs/design/DESIGN.md (seção "Adaptações do portfólio").
+ * As cores são semânticas e trocam entre tema escuro (padrão do design) e claro.
+ * O tema vem de data-theme no <html>; sem JS, vale a preferência do sistema.
+ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --bg: #f5f6f8;
+  --surface-1: #ffffff;
+  --surface-2: #eceef2;
+  --surface-3: #e2e5ea;
+  --line: #d5dae2;
+  --line-strong: #566171;
+  --ink: #0e1012;
+  --body: #444d5a;
+  --muted: #566171;
+  --accent: #0062ca;
+  --accent-hover: #0050a6;
+  --link: #0062ca;
+  --live: #228a56;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0e1012;
+  --surface-1: #15171b;
+  --surface-2: #1c1f24;
+  --surface-3: #23262d;
+  --line: #23262d;
+  --line-strong: #bbc2ce;
+  --ink: #ffffff;
+  --body: #a0aaba;
+  --muted: #8b96aa;
+  --accent: #0062ca;
+  --accent-hover: #007afc;
+  --link: #3b95ff;
+  --live: #2fb874;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --bg: #0e1012;
+    --surface-1: #15171b;
+    --surface-2: #1c1f24;
+    --surface-3: #23262d;
+    --line: #23262d;
+    --line-strong: #bbc2ce;
+    --ink: #ffffff;
+    --body: #a0aaba;
+    --muted: #8b96aa;
+    --accent: #0062ca;
+    --accent-hover: #007afc;
+    --link: #3b95ff;
+    --live: #2fb874;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+
+  --color-bg: var(--bg);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-body: var(--body);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-link: var(--link);
+  --color-live: var(--live);
+}
+
+@theme {
+  /* Escala tipográfica do DESIGN.md (caption sobe de 10px para 12px). */
+  --text-caption: 12px;
+  --text-caption--line-height: 1.6;
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 1.43;
+  --text-body: 16px;
+  --text-body--line-height: 1.5;
+  --text-subheading: 18px;
+  --text-subheading--line-height: 1.5;
+  --text-heading-sm: 24px;
+  --text-heading-sm--line-height: 1.33;
+  --text-heading: 32px;
+  --text-heading--line-height: 1.25;
+  --text-heading-lg: 44px;
+  --text-heading-lg--line-height: 1.14;
+  --text-heading-lg--letter-spacing: -0.02em;
+  --text-display: 68px;
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.02em;
+
+  --radius-badge: 4px;
+  --radius-input: 6px;
+  --radius-chip: 12px;
+  --radius-card: 24px;
+  --radius-pill: 100px;
+
+  --container-page: 1344px;
+}
+
+@layer base {
+  html {
+    background-color: var(--bg);
+    scroll-padding-top: 86px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--body);
+    font-family: var(--font-sans);
+    font-feature-settings: "lnum";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: #ffffff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--link);
+    outline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/*
+ * Animações ligadas à rolagem, só em CSS (sem JS no cliente).
+ * Sem suporte a animation-timeline ou com movimento reduzido, tudo fica parado.
+ */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.scroll-progress {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal,
+    .reveal-group > * {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 220px;
+    }
+
+    /* Itens na mesma linha de uma grade entram um pouco defasados. */
+    .reveal-group > :nth-child(3n + 2) {
+      animation-range: entry 40px entry 260px;
+    }
+
+    .reveal-group > :nth-child(3n + 3) {
+      animation-range: entry 80px entry 300px;
+    }
+
+    .scroll-progress {
+      display: block;
+      transform-origin: left;
+      animation: grow-x linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+}
+
+/* Grade de pontos do hero, esmaecida nas bordas. */
+.hero-backdrop {
+  background-image:
+    radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--accent) 16%, transparent),
+      transparent
+    ),
+    radial-gradient(var(--line) 1.2px, transparent 1.2px);
+  background-size:
+    min(900px, 120%) 420px,
+    22px 22px;
+  background-position:
+    center 40px,
+    center top;
+  background-repeat: no-repeat, repeat;
+  mask-image: radial-gradient(ellipse 70% 80% at 50% 35%, #000 30%, transparent 75%);
+}
+
+/* Logos monocromáticos: o SVG vira máscara e a cor vem do texto. */
+.logo-mask {
+  background-color: currentColor;
+  mask: var(--logo) no-repeat left center / contain;
+}
+
+/* Ícone do botão de tema: mostra o tema para o qual o clique leva. */
+.theme-icon-sun {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-icon-sun {
+  display: block;
+}
+
+:root[data-theme="dark"] .theme-icon-moon {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .theme-icon-sun {
+    display: block;
+  }
+
+  :root:not([data-theme]) .theme-icon-moon {
+    display: none;
+  }
 }
